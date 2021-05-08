@@ -43,23 +43,8 @@ print('Conectado com: ', endereco2)
 connexao3, endereco3 = pc3.accept()
 print('Conectado com: ', endereco3)
 
-# Envia a lista de Publishers:
-for n in listaPub:
-    connexao1.sendall(str.encode(n))
-    connexao2.sendall(str.encode(n))
-    connexao3.sendall(str.encode(n))
-
-# Recebe Publisher escolhido pelos subscribes
-listaRespSub1 = connexao1.recv(1024)
-listaRespSub2 = connexao2.recv(1024)
-listaRespSub3 = connexao3.recv(1024)
-
-# imprime a escolha dos subscribes
-print(listaRespSub1.decode())
-print(listaRespSub2.decode())
-print(listaRespSub3.decode())
-
 #   Função que envia dados para o pc1
+
 
 def pc1(data):
     connexao1.sendall(str.encode(data))
@@ -73,17 +58,58 @@ def pc3(data):
     connexao3.sendall(str.encode(data))
 
 
-#   Função responsavel por inscrever os PCs nos grupos
-pub.subscribe(pc1, listaRespSub1.decode())
-pub.subscribe(pc2, listaRespSub2.decode())
-pub.subscribe(pc3, listaRespSub3.decode())
+def Inscrição():
+    # Envia a lista de Publishers:
+    for n in listaPub:
+        connexao1.sendall(str.encode(n))
+        connexao2.sendall(str.encode(n))
+        connexao3.sendall(str.encode(n))
 
-#   Função responsavel por mandar as mensagens para determinado grupo inscrito
-pub.sendMessage(listaRespSub1.decode(), data='SERVIDOR MANDOU PARA O PC1')
-pub.sendMessage(listaRespSub2.decode(), data='SERVIDOR MANDOU PARA O PC2')
-pub.sendMessage(listaRespSub3.decode(), data='SERVIDOR MANDOU PARA O PC3')
+    # Recebe Publisher escolhido pelos subscribes
+    listaRespSub1 = connexao1.recv(1024)
+    listaRespSub2 = connexao2.recv(1024)
+    listaRespSub3 = connexao3.recv(1024)
 
-print('Mensagem enviada aos Clientes!')
+    # imprime a escolha dos subscribes
+    print('PC1 escolheu se inscrever em:', listaRespSub1.decode())
+    print('PC2 escolheu se inscrever em:', listaRespSub2.decode())
+    print('PC3 escolheu se inscrever em:', listaRespSub3.decode())
+
+    #   Função responsavel por inscrever os PCs nos grupos
+    pub.subscribe(pc1, listaRespSub1.decode())
+    pub.subscribe(pc2, listaRespSub2.decode())
+    pub.subscribe(pc3, listaRespSub3.decode())
+
+
+def EnviarMensagem():
+    #   Escolha da mensagem que se quer enviar
+    print('Escreva uma mensagem para os Inscritos em:', listaPub[1])
+    data1 = input()
+    pub.sendMessage(listaPub[1], data=data1)
+    print('Escreva uma mensagem para os Inscritos em:', listaPub[2])
+    data2 = input()
+    pub.sendMessage(listaPub[2], data=data2)
+    print('Escreva uma mensagem para os Inscritos em:', listaPub[3])
+    data3 = input()
+    pub.sendMessage(listaPub[3], data=data3)
+    print('Mensagem enviada aos Clientes!')
+
+
+def Desinscrever(pc):
+    if pc == 1:
+        pub.unsubscribe(pc1, listaRespSub1.decode())
+    if pc == 2:
+        pub.unsubscribe(pc2, listaRespSub2.decode())
+    if pc == 3:
+        pub.unsubscribe(pc3, listaRespSub3.decode())
+
+
+while True:
+    Inscrição()
+    EnviarMensagem()
+
+
+
 
 #   Fecha as conexaos do socket
 connexao1.close()

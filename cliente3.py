@@ -17,19 +17,35 @@ s.connect((HOST, PORT))
 listaPub1 = s.recv(1024)
 listaPub2 = s.recv(1024)
 listaPub3 = s.recv(1024)
-print('Publishers cadastrados:')
+
+# Imprimindo a lista:
+print('\nPublishers cadastrados:')
 print(listaPub1.decode())
 print(listaPub2.decode())
 print(listaPub3.decode())
+print('\n')
 
 #   perguntar oa usuario qual publisher ele quer se inscrever
 print('Qual Publisher Voce que se inscrever?')
 resposta = input()
 
 #   envia a resposta
-print('Resposta enviada: ', resposta)
+print('Inscrito em: ', resposta)
 s.sendall(str.encode(resposta))
 
-#   Recebendo resposta da comunicacao
-data = s.recv(1024)
-print('Resposta recebida:', data.decode())
+while True:
+    #   Recebendo resposta da comunicacao
+    data = s.recv(1024)
+    print('\nMensagem recebida: ', data.decode())
+
+    print('MENU:\n\n')
+    print('(1) Continuar inscrito')
+    print('(2) Se desinscrever')
+    print('(3) Sair')
+    opcao = input()
+
+    if opcao == 1:
+        s.sendall(str.encode('false'))
+
+    elif opcao == 2:
+        s.sendall(str.encode('true'))
