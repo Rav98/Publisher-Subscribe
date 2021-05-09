@@ -10,42 +10,60 @@ PORT = 5003
 #   Criando o objeto socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+print('Conectando.......\n')
+
 #   Pedindo a conexao ao servidor
 s.connect((HOST, PORT))
 
-#   Recebendo a lista de Publichers
-listaPub1 = s.recv(1024)
-listaPub2 = s.recv(1024)
-listaPub3 = s.recv(1024)
+print('Conexão concluida!\n')
 
-# Imprimindo a lista:
-print('\nPublishers cadastrados:')
-print(listaPub1.decode())
-print(listaPub2.decode())
-print(listaPub3.decode())
-print('\n')
 
-#   perguntar oa usuario qual publisher ele quer se inscrever
-print('Qual Publisher Voce que se inscrever?')
-resposta = input()
+def Inscrição():
+    #   Recebendo a lista de Publichers
+    listaPub1 = s.recv(1024)
+    listaPub2 = s.recv(1024)
+    listaPub3 = s.recv(1024)
 
-#   envia a resposta
-print('Inscrito em: ', resposta)
-s.sendall(str.encode(resposta))
+    #   Imprimindo a lista:
+    print('\nPublishers cadastrados:')
+    print(listaPub1.decode())
+    print(listaPub2.decode())
+    print(listaPub3.decode())
+    print('\n')
 
-while True:
+    #   Perguntar oa usuario qual publisher ele quer se inscrever
+    print('Qual Publisher Voce que se inscrever?')
+    resposta = input()
+
+    #   Envia a resposta
+    print('Inscrição concluida em: ', resposta)
+    s.sendall(str.encode(resposta))
+
+
+def RecebeMensagem():
     #   Recebendo resposta da comunicacao
     data = s.recv(1024)
     print('\nMensagem recebida: ', data.decode())
 
-    print('MENU:\n\n')
-    print('(1) Continuar inscrito')
-    print('(2) Se desinscrever')
-    print('(3) Sair')
+
+while True:
+
+    #   Lendo opção que o cliente quer fazer
+    print('----Menu----\n')
+    print('Digite 1 para receber mensagens')
+    print('Digite 2 para se inscrever')
+    print('Digite 3 para se desinscrever')
+    print('Digite 4 para sair')
     opcao = input()
 
-    if opcao == 1:
-        s.sendall(str.encode('false'))
+    s.sendall(str.encode(opcao))
 
-    elif opcao == 2:
-        s.sendall(str.encode('true'))
+    if (opcao == '1'):
+        RecebeMensagem()
+    elif (opcao == '2'):
+        Inscrição()
+    elif (opcao == '3'):
+        print('desinscrevendo')
+    else:
+        break
+   

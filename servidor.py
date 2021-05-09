@@ -10,8 +10,12 @@ PORT1 = 5001
 PORT2 = 5002
 PORT3 = 5003
 
-# Publichers cadastrados
+#   Publichers cadastrados
 listaPub = ['Alef', 'Flavio', 'Rafael']
+
+global listaRespSub1
+global listaRespSub2
+global listaRespSub3
 
 # Criando o objeto socket
 pc1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -58,27 +62,33 @@ def pc3(data):
     connexao3.sendall(str.encode(data))
 
 
-def Inscrição():
-    # Envia a lista de Publishers:
-    for n in listaPub:
-        connexao1.sendall(str.encode(n))
-        connexao2.sendall(str.encode(n))
-        connexao3.sendall(str.encode(n))
+def Inscrição(pc):
+    if(pc == '1'):
+        # Envia a lista de Publishers:
+        for n in listaPub:
+            connexao1.sendall(str.encode(n))
+        # Recebe Publisher escolhido pelos subscribes
+        listaRespSub1 = connexao1.recv(1024)
+        # imprime a escolha dos subscribes
+        print('PC1 escolheu se inscrever em:', listaRespSub1.decode())
+        #   Função responsavel por inscrever os PCs nos grupos
+        pub.subscribe(pc1, listaRespSub1.decode())
 
-    # Recebe Publisher escolhido pelos subscribes
-    listaRespSub1 = connexao1.recv(1024)
-    listaRespSub2 = connexao2.recv(1024)
-    listaRespSub3 = connexao3.recv(1024)
+    elif(pc == '2'):
+        for n in listaPub:
+            connexao2.sendall(str.encode(n))
 
-    # imprime a escolha dos subscribes
-    print('PC1 escolheu se inscrever em:', listaRespSub1.decode())
-    print('PC2 escolheu se inscrever em:', listaRespSub2.decode())
-    print('PC3 escolheu se inscrever em:', listaRespSub3.decode())
+        listaRespSub2 = connexao2.recv(1024)
+        print('PC2 escolheu se inscrever em:', listaRespSub2.decode())
+        pub.subscribe(pc2, listaRespSub2.decode())
 
-    #   Função responsavel por inscrever os PCs nos grupos
-    pub.subscribe(pc1, listaRespSub1.decode())
-    pub.subscribe(pc2, listaRespSub2.decode())
-    pub.subscribe(pc3, listaRespSub3.decode())
+    elif(pc == '3'):
+        for n in listaPub:
+            connexao3.sendall(str.encode(n))
+
+        listaRespSub3 = connexao3.recv(1024)
+        print('PC3 escolheu se inscrever em:', listaRespSub3.decode())
+        pub.subscribe(pc3, listaRespSub3.decode())
 
 
 def EnviarMensagem():
@@ -96,19 +106,36 @@ def EnviarMensagem():
 
 
 def Desinscrever(pc):
-    if pc == 1:
+    if (pc == '1'):
         pub.unsubscribe(pc1, listaRespSub1.decode())
-    if pc == 2:
+        print('PC1 Desinscrito do:', listaRespSub1.decode())
+    elif (pc == '2'):
         pub.unsubscribe(pc2, listaRespSub2.decode())
-    if pc == 3:
+        print('PC1 Desinscrito do:', listaRespSub1.decode())
+    elif (pc == '3'):
         pub.unsubscribe(pc3, listaRespSub3.decode())
+        print('PC1 Desinscrito do:', listaRespSub1.decode())
 
 
 while True:
-    Inscrição()
-    EnviarMensagem()
+    # ouvindo os clientes para saber se eles querem se inscrever
+    resposta1 = connexao1.recv(1024)
+    if resposta1.decode() == '2':
+        Inscrição('1')
+    elif resposta1.decode() == '3':
+        Desinscrever('1')
 
+    resposta2 = connexao2.recv(1024)
+    if resposta2.decode() == '2':
+        Inscrição('2')
+    elif resposta2.decode() == '3':
+        Desinscrever('2')
 
+    resposta3 = connexao3.recv(1024)
+    if resposta3.decode() == '2':
+        Inscrição('3')
+    elif resposta3.decode() == '3':
+        Desinscrever('3')
 
 
 #   Fecha as conexaos do socket
