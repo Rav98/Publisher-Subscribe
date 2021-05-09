@@ -45,17 +45,19 @@ def RecebeMensagem():
     data = s.recv(1024)
     print('\nMensagem recebida: ', data.decode())
 
+
 def Desinscrever():
-    listaPub1 = s.recv(1024)
-    listaPub2 = s.recv(1024)
-    listaPub3 = s.recv(1024)
+    numInscricoes = s.recv(1024)
+    cont = 0
+    while cont < (int(numInscricoes.decode())):
+        listaInscricoes[numInscricoes.decode()] = s.recv(1024)
+        cont += 1
 
     #   Imprimindo a lista:
     print('\nPublishers inscritos')
-    print(listaPub1.decode())
-    print(listaPub2.decode())
-    print(listaPub3.decode())
-    print('\n')
+    for n in listaInscricoes:
+        print(n)
+        print('\n')
 
     #   Perguntar oa usuario qual publisher ele quer se desinscrever
     print('Qual Publisher Voce que se desinscrever?')
@@ -64,6 +66,7 @@ def Desinscrever():
     #   Envia a resposta
     print('Desinscrito em: ', resposta)
     s.sendall(str.encode(resposta))
+
 
 while True:
 
@@ -85,4 +88,3 @@ while True:
         Desinscrever()
     else:
         break
-    

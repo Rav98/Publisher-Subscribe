@@ -117,6 +117,7 @@ def EnviarMensagem():
 
 def Desinscrever(pc):
     if (pc == '1'):
+        connexao1.sendall(str.encode(str(len(listaDeinscricaoPC1))))
         for n in listaDeinscricaoPC1:
             connexao1.sendall(str.encode(n))
         listaRespSub1 = connexao1.recv(1024)
