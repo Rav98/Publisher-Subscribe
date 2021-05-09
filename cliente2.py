@@ -1,4 +1,4 @@
-# Cliente 1
+# Cliente 2
 
 #   Importando o socket
 import socket
@@ -17,11 +17,16 @@ s.connect((HOST, PORT))
 
 print('Conexão concluida!\n')
 
-#lista
-global inscricoes
-inscricoes2=['']
+#   Lista de inscrições do usuario
+inscricoes1 = ['']
 
-def Inscrição():
+#   Contador de quantas inscrições o Inscrito tem
+global contInscri
+contInscri = 0
+
+
+def Inscrição(contInscri):
+    contInscri = contInscri+1
     #   Recebendo a lista de Publichers
     listaPub1 = s.recv(1024)
     listaPub2 = s.recv(1024)
@@ -29,55 +34,59 @@ def Inscrição():
 
     #   Imprimindo a lista:
     print('\nPublishers cadastrados:')
-    print(listaPub1.decode())
-    print(listaPub2.decode())
-    print(listaPub3.decode())
-    print('\n')
+    print('->', listaPub1.decode())
+    print('->', listaPub2.decode())
+    print('->', listaPub3.decode())
 
     #   Perguntar oa usuario qual publisher ele quer se inscrever
     print('Qual Publisher Voce que se inscrever?')
     resposta = input()
 
     #   Envia a resposta
-    print('Inscrição concluida em: ', resposta)
+    print('\nInscrição concluida em: ', resposta)
     s.sendall(str.encode(resposta))
+    return contInscri
 
 
-def RecebeMensagem():
-    #   Recebendo resposta da comunicacao
-    data = s.recv(1024)
-    print('\nMensagem recebida: ', data.decode())
+def RecebeMensagem(contInscri):
+    i = 0
+    while i < contInscri:
+        i = i+1
+        #   Recebendo resposta da comunicacao
+        data = s.recv(1024)
+        print('\nMensagem recebida: ', data.decode(), '\n')
 
 
-def Desinscrever():
-    numInscricoes2 = s.recv(1024)
+def Desinscrever(contInscri):
+    contInscri = contInscri-1
+    numInscricoes1 = s.recv(1024)
     cont = 0
-    while cont < (int(numInscricoes2.decode())):
-        inscricoes2.append(s.recv(1024))
+    while cont < (int(numInscricoes1.decode())):
+        inscricoes1.append(s.recv(1024))
         cont += 1
 
     #   Imprimindo a lista:
-    print('\nPublishers inscritos')
-    for n in inscricoes2:
+    print('\nInscritos nos Publichers:')
+    for n in inscricoes1:
         print(n)
-        print('\n')
 
     #   Perguntar oa usuario qual publisher ele quer se desinscrever
-    print('Qual Publisher Voce que se desinscrever?')
+    print('\nQual Publisher Voce que se desinscrever?')
     resposta = input()
 
     #   Envia a resposta
-    print('Desinscrito em: ', resposta)
+    print('\nDesinscrito em: ', resposta, '\n')
     s.sendall(str.encode(resposta))
 
-     #   Limpa a lista aqui para receber uma nova lista atualizada do servidor
-    inscricoes2.clear()
+    #   Limpa a lista aqui para receber uma nova lista atualizada do servidor
+    inscricoes1.clear()
+    return contInscri
 
 
 while True:
 
     #   Lendo opção que o cliente quer fazer
-    print('----Menu----\n')
+    print('\n----Menu----\n')
     print('Digite 1 para receber mensagens')
     print('Digite 2 para se inscrever')
     print('Digite 3 para se desinscrever')
@@ -87,11 +96,12 @@ while True:
     s.sendall(str.encode(opcao))
 
     if (opcao == '1'):
-        RecebeMensagem()
+        RecebeMensagem(contInscri)  
     elif (opcao == '2'):
-        Inscrição()
+        contInscri = Inscrição(contInscri)
     elif (opcao == '3'):
-        Desinscrever()
+        contInscri = Desinscrever(contInscri)
+        
     else:
         s.close()
         break
