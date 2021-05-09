@@ -13,11 +13,20 @@ PORT3 = 5003
 #   Publichers cadastrados
 listaPub = ['Alef', 'Flavio', 'Rafael']
 
+#   Lista para salvar as inscrições de cada PCs
+global listaDeinscricaoPC1
+listaDeinscricaoPC1 = []
+global listaDeinscricaoPC2
+listaDeinscricaoPC2 = []
+global listaDeinscricaoPC3
+listaDeinscricaoPC3 = []
+
+#   Variaveis globais para salvar as respostas retornadas pelos PCs
 global listaRespSub1
 global listaRespSub2
 global listaRespSub3
 
-# Criando o objeto socket
+#   Criando o objeto socket
 pc1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 pc2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 pc3 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -69,6 +78,7 @@ def Inscrição(pc):
             connexao1.sendall(str.encode(n))
         # Recebe Publisher escolhido pelos subscribes
         listaRespSub1 = connexao1.recv(1024)
+        listaDeinscricaoPC1.append(listaRespSub1.decode())
         # imprime a escolha dos subscribes
         print('PC1 escolheu se inscrever em:', listaRespSub1.decode())
         #   Função responsavel por inscrever os PCs nos grupos
@@ -77,16 +87,16 @@ def Inscrição(pc):
     elif(pc == '2'):
         for n in listaPub:
             connexao2.sendall(str.encode(n))
-
         listaRespSub2 = connexao2.recv(1024)
+        listaDeinscricaoPC2.append(listaRespSub2.decode())
         print('PC2 escolheu se inscrever em:', listaRespSub2.decode())
         pub.subscribe(pc2, listaRespSub2.decode())
 
     elif(pc == '3'):
         for n in listaPub:
             connexao3.sendall(str.encode(n))
-
         listaRespSub3 = connexao3.recv(1024)
+        listaDeinscricaoPC3.append(listaRespSub3.decode())
         print('PC3 escolheu se inscrever em:', listaRespSub3.decode())
         pub.subscribe(pc3, listaRespSub3.decode())
 
@@ -107,14 +117,23 @@ def EnviarMensagem():
 
 def Desinscrever(pc):
     if (pc == '1'):
+        for n in listaDeinscricaoPC1:
+            connexao1.sendall(str.encode(n))
+        listaRespSub1 = connexao1.recv(1024)
         pub.unsubscribe(pc1, listaRespSub1.decode())
         print('PC1 Desinscrito do:', listaRespSub1.decode())
     elif (pc == '2'):
+        for n in listaDeinscricaoPC2:
+            connexao2.sendall(str.encode(n))
+        listaRespSub2 = connexao2.recv(1024)
         pub.unsubscribe(pc2, listaRespSub2.decode())
-        print('PC1 Desinscrito do:', listaRespSub1.decode())
+        print('PC2 Desinscrito do:', listaRespSub2.decode())
     elif (pc == '3'):
+        for n in listaDeinscricaoPC3:
+            connexao3.sendall(str.encode(n))
+        listaRespSub3 = connexao3.recv(1024)
         pub.unsubscribe(pc3, listaRespSub3.decode())
-        print('PC1 Desinscrito do:', listaRespSub1.decode())
+        print('PC3 Desinscrito do:', listaRespSub3.decode())
 
 
 while True:

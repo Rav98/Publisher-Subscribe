@@ -45,6 +45,25 @@ def RecebeMensagem():
     data = s.recv(1024)
     print('\nMensagem recebida: ', data.decode())
 
+def Desinscrever():
+    listaPub1 = s.recv(1024)
+    listaPub2 = s.recv(1024)
+    listaPub3 = s.recv(1024)
+
+    #   Imprimindo a lista:
+    print('\nPublishers inscritos')
+    print(listaPub1.decode())
+    print(listaPub2.decode())
+    print(listaPub3.decode())
+    print('\n')
+
+    #   Perguntar oa usuario qual publisher ele quer se desinscrever
+    print('Qual Publisher Voce que se desinscrever?')
+    resposta = input()
+
+    #   Envia a resposta
+    print('Desinscrito em: ', resposta)
+    s.sendall(str.encode(resposta))
 
 while True:
 
@@ -63,6 +82,6 @@ while True:
     elif (opcao == '2'):
         Inscrição()
     elif (opcao == '3'):
-        print('desinscrevendo')
+        Desinscrever()
     else:
         break
