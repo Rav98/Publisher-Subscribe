@@ -17,6 +17,9 @@ s.connect((HOST, PORT))
 
 print('Conexão concluida!\n')
 
+#lista
+global inscricoes
+inscricoes1=['']
 
 def Inscrição():
     #   Recebendo a lista de Publichers
@@ -47,15 +50,15 @@ def RecebeMensagem():
 
 
 def Desinscrever():
-    numInscricoes = s.recv(1024)
+    numInscricoes1 = s.recv(1024)
     cont = 0
-    while cont < (int(numInscricoes.decode())):
-        listaInscricoes[numInscricoes.decode()] = s.recv(1024)
+    while cont < (int(numInscricoes1.decode())):
+        inscricoes1.append(s.recv(1024))
         cont += 1
 
     #   Imprimindo a lista:
-    print('\nPublishers inscritos')
-    for n in listaInscricoes:
+    print('\nPublishers inscritos:')
+    for n in inscricoes1:
         print(n)
         print('\n')
 
@@ -66,6 +69,9 @@ def Desinscrever():
     #   Envia a resposta
     print('Desinscrito em: ', resposta)
     s.sendall(str.encode(resposta))
+
+    #   Limpa a lista aqui para receber uma nova lista atualizada do servidor
+    inscricoes1.clear()
 
 
 while True:
@@ -87,4 +93,5 @@ while True:
     elif (opcao == '3'):
         Desinscrever()
     else:
+        s.close()
         break

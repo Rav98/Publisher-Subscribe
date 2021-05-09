@@ -1,4 +1,4 @@
-# Cliente 2
+# Cliente 1
 
 #   Importando o socket
 import socket
@@ -17,6 +17,9 @@ s.connect((HOST, PORT))
 
 print('Conexão concluida!\n')
 
+#lista
+global inscricoes
+inscricoes2=['']
 
 def Inscrição():
     #   Recebendo a lista de Publichers
@@ -45,16 +48,17 @@ def RecebeMensagem():
     data = s.recv(1024)
     print('\nMensagem recebida: ', data.decode())
 
+
 def Desinscrever():
-    numInscricoes = s.recv(1024)
+    numInscricoes2 = s.recv(1024)
     cont = 0
-    while cont < (numInscricoes.decode()):
-        listaInscricoes[numInscricoes.decode()] = s.recv(1024)
+    while cont < (int(numInscricoes2.decode())):
+        inscricoes2.append(s.recv(1024))
         cont += 1
 
     #   Imprimindo a lista:
     print('\nPublishers inscritos')
-    for n in listaInscricoes:
+    for n in inscricoes2:
         print(n)
         print('\n')
 
@@ -65,6 +69,9 @@ def Desinscrever():
     #   Envia a resposta
     print('Desinscrito em: ', resposta)
     s.sendall(str.encode(resposta))
+
+     #   Limpa a lista aqui para receber uma nova lista atualizada do servidor
+    inscricoes2.clear()
 
 
 while True:
@@ -86,4 +93,5 @@ while True:
     elif (opcao == '3'):
         Desinscrever()
     else:
+        s.close()
         break

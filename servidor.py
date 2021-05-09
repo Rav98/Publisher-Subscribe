@@ -103,15 +103,15 @@ def Inscrição(pc):
 
 def EnviarMensagem():
     #   Escolha da mensagem que se quer enviar
-    print('Escreva uma mensagem para os Inscritos em:', listaPub[1])
+    print('Escreva uma mensagem para os Inscritos em:', listaPub[0])
     data1 = input()
-    pub.sendMessage(listaPub[1], data=data1)
-    print('Escreva uma mensagem para os Inscritos em:', listaPub[2])
+    pub.sendMessage(listaPub[0], data=data1)
+    print('Escreva uma mensagem para os Inscritos em:', listaPub[1])
     data2 = input()
-    pub.sendMessage(listaPub[2], data=data2)
-    print('Escreva uma mensagem para os Inscritos em:', listaPub[3])
+    pub.sendMessage(listaPub[1], data=data2)
+    print('Escreva uma mensagem para os Inscritos em:', listaPub[2])
     data3 = input()
-    pub.sendMessage(listaPub[3], data=data3)
+    pub.sendMessage(listaPub[2], data=data3)
     print('Mensagem enviada aos Clientes!')
 
 
@@ -121,18 +121,23 @@ def Desinscrever(pc):
         for n in listaDeinscricaoPC1:
             connexao1.sendall(str.encode(n))
         listaRespSub1 = connexao1.recv(1024)
+        listaDeinscricaoPC1.remove(listaRespSub1.decode())
         pub.unsubscribe(pc1, listaRespSub1.decode())
         print('PC1 Desinscrito do:', listaRespSub1.decode())
     elif (pc == '2'):
+        connexao2.sendall(str.encode(str(len(listaDeinscricaoPC2))))
         for n in listaDeinscricaoPC2:
             connexao2.sendall(str.encode(n))
         listaRespSub2 = connexao2.recv(1024)
+        listaDeinscricaoPC2.remove(listaRespSub2.decode())
         pub.unsubscribe(pc2, listaRespSub2.decode())
         print('PC2 Desinscrito do:', listaRespSub2.decode())
     elif (pc == '3'):
+        connexao3.sendall(str.encode(str(len(listaDeinscricaoPC3))))
         for n in listaDeinscricaoPC3:
             connexao3.sendall(str.encode(n))
         listaRespSub3 = connexao3.recv(1024)
+        listaDeinscricaoPC3.remove(listaRespSub3.decode())
         pub.unsubscribe(pc3, listaRespSub3.decode())
         print('PC3 Desinscrito do:', listaRespSub3.decode())
 
@@ -140,7 +145,9 @@ def Desinscrever(pc):
 while True:
     # ouvindo os clientes para saber se eles querem se inscrever
     resposta1 = connexao1.recv(1024)
-    if resposta1.decode() == '2':
+    if resposta1.decode() == '1':
+        EnviarMensagem()
+    elif resposta1.decode() == '2':
         Inscrição('1')
     elif resposta1.decode() == '3':
         Desinscrever('1')
