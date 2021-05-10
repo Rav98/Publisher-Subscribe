@@ -70,8 +70,8 @@ def sub3(data):
 
 
 # Função responsavel por inscrever o usuario em algum Publisher
-def Inscrição(pc):
-    if(pc == '1'):
+def Inscrição(sub):
+    if(sub == '1'):
         # Envia a lista de Publishers:
         for n in listaPub:
             connexao1.sendall(str.encode(n))
@@ -83,7 +83,7 @@ def Inscrição(pc):
         #   Função responsavel por inscrever os Subscriber nos grupos
         pub.Subscriber(sub1, RespSub1.decode())
 
-    elif(pc == '2'):
+    elif(sub == '2'):
         # Envia a lista de Publishers:
         for n in listaPub:
             connexao2.sendall(str.encode(n))
@@ -95,7 +95,7 @@ def Inscrição(pc):
         #   Função responsavel por inscrever os Subscribers nos grupos
         pub.Subscriber(sub2, RespSub2.decode())
 
-    elif(pc == '3'):
+    elif(sub == '3'):
         # Envia a lista de Publishers:
         for n in listaPub:
             connexao3.sendall(str.encode(n))
@@ -126,8 +126,8 @@ def EnviarMensagem():
 # Função responsavel por desinscrever o Subscriber
 
 
-def Desinscrever(pc):
-    if (pc == '1'):
+def Desinscrever(sub):
+    if (sub == '1'):
         connexao1.sendall(str.encode(str(len(ListaInscricaoPub1))))
         for n in ListaInscricaoPub1:
             connexao1.sendall(str.encode(n))
@@ -135,7 +135,7 @@ def Desinscrever(pc):
         ListaInscricaoPub1.remove(RespSub1.decode())
         pub.unSubscriber(sub1, RespSub1.decode())
         print('sub1 se desinscreveu de:', RespSub1.decode())
-    elif (pc == '2'):
+    elif (sub == '2'):
         connexao2.sendall(str.encode(str(len(listaInscricaoPub2))))
         for n in listaInscricaoPub2:
             connexao2.sendall(str.encode(n))
@@ -143,7 +143,7 @@ def Desinscrever(pc):
         listaInscricaoPub2.remove(RespSub2.decode())
         pub.unSubscriber(sub2, RespSub2.decode())
         print('sub2 se desinscreveu de:', RespSub2.decode())
-    elif (pc == '3'):
+    elif (sub == '3'):
         connexao3.sendall(str.encode(str(len(listaInscricaoPub3))))
         for n in listaInscricaoPub3:
             connexao3.sendall(str.encode(n))
