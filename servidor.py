@@ -57,6 +57,8 @@ connexao3, endereco3 = sub3.accept()
 print('Conectado com: ', endereco3)
 
 #   Função que envia dados para os Subscribers inscritos
+
+
 def sub1(data):
     connexao1.sendall(str.encode(data))
 
@@ -165,19 +167,23 @@ while True:
         Desinscrever('1')
 
     resposta2 = connexao2.recv(1024)
-    if resposta2.decode() == '2':
+    if resposta2.decode() == '1':
+        EnviarMensagem()
+    elif resposta2.decode() == '2':
         Inscrição('2')
     elif resposta2.decode() == '3':
         Desinscrever('2')
 
     resposta3 = connexao3.recv(1024)
-    if resposta3.decode() == '2':
+    if resposta1.decode() == '1':
+        EnviarMensagem()
+    elif resposta3.decode() == '2':
         Inscrição('3')
     elif resposta3.decode() == '3':
         Desinscrever('3')
 
 
-#   Fecha as conexaos do socket
+#   Fecha as conexao do socket
 connexao1.close()
 connexao2.close()
 connexao3.close()
