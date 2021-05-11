@@ -10,7 +10,7 @@ PORT = 5003
 #   Criando o objeto socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-print('Conectando.......\n')
+print('\nConectando.......\n')
 
 #   Pedindo a conexao ao Broker
 s.connect((HOST, PORT))
@@ -39,7 +39,7 @@ def Inscrição(contInscri):
     print('->', Pub3.decode())
 
     #   Perguntar oa Subscriber qual Publisher ele quer se inscrever
-    print('Qual Publisher Voce que se inscrever?')
+    print('Qual Publisher voce quer se inscrever?')
     resposta = input()
 
     #   Envia a resposta
@@ -66,20 +66,21 @@ def Desinscrever(contInscri):
     numinscricoes = s.recv(1024)
     cont = 0
     while cont < (int(numinscricoes.decode())):
-        inscricoes.append(s.recv(1024))
+        value=s.recv(1024)
+        inscricoes.append(value.decode())
         cont += 1
 
     #   Imprimindo a lista:
-    print('\nInscritos nos Publichers:')
+    print('\nVocê está inscrito nos Publichers:')
     for n in inscricoes:
         print(n)
 
     #   Perguntar oa usuario qual Publisher ele quer se desinscrever
-    print('\nQual Publisher Voce que se desinscrever?')
+    print('\nQual Publisher voce quer se desinscrever?')
     resposta = input()
 
     #   Envia a resposta
-    print('\nDesinscrito em: ', resposta, '\n')
+    print('\nDesinscrito do Publisher: ', resposta, '\n')
     s.sendall(str.encode(resposta))
 
     #   Limpa a lista aqui para receber uma nova lista atualizada do Broker
@@ -91,7 +92,7 @@ def Desinscrever(contInscri):
 while True:
 
     #   Lendo opção que o Subscriber deseja fazer:
-    print('\n----Menu----\n')
+    print('\n----Menu Subscribe 3----\n')
     print('Digite 1 para receber mensagens')
     print('Digite 2 para se inscrever')
     print('Digite 3 para se desinscrever')
