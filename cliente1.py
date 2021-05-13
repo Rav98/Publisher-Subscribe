@@ -20,23 +20,21 @@ print('Conexão concluida!\n')
 #   Lista de inscrições do Subscriber
 inscricoes = ['']
 
-#   Contador de quantas inscrições o Subscriber tem
-global contInscri
-contInscri = 0
 
 
-def Inscrição(contInscri):
-    contInscri = contInscri+1
+def Inscrição():
     #   Recebendo a lista de Publishers
-    Pub1 = s.recv(1024)
-    Pub2 = s.recv(1024)
-    Pub3 = s.recv(1024)
+    cont = 0
+    Publishers = []
+    while cont < (3):
+        value = s.recv(1024)
+        Publishers.append(value.decode())
+        cont += 1
 
     #   Imprimindo a lista de Publishers para o Subscriber escolher:
     print('\nPublishers cadastrados:')
-    print('->', Pub1.decode())
-    print('->', Pub2.decode())
-    print('->', Pub3.decode())
+    for n in Publishers:
+        print('->',n)
 
     #   Perguntar oa Subscriber qual Publisher ele quer se inscrever
     print('Qual Publisher voce quer se inscrever?')
@@ -45,14 +43,15 @@ def Inscrição(contInscri):
     #   Envia a resposta
     print('\nInscrição concluida em: ', resposta)
     s.sendall(str.encode(resposta))
-    return contInscri
+
 
 #   Função responsavel por receber a mensagem do Broker
 
 
-def RecebeMensagem(contInscri):
+def RecebeMensagem():
     i = 0
-    while i < contInscri:
+    numEscricao = s.recv(1024)
+    while i < int(numEscricao):
         i = i+1
         #   Recebendo resposta da comunicacao
         data = s.recv(1024)
@@ -61,12 +60,11 @@ def RecebeMensagem(contInscri):
 #   Função responsavel por enviar a requisição de desinscrição do Publisher
 
 
-def Desinscrever(contInscri):
-    contInscri = contInscri-1
+def Desinscrever():
     numinscricoes = s.recv(1024)
     cont = 0
     while cont < (int(numinscricoes.decode())):
-        value=s.recv(1024)
+        value = s.recv(1024)
         inscricoes.append(value.decode())
         cont += 1
 
@@ -85,7 +83,6 @@ def Desinscrever(contInscri):
 
     #   Limpa a lista aqui para receber uma nova lista atualizada do Broker
     inscricoes.clear()
-    return contInscri
 
 
 # Rotina de execução do Subscriber
@@ -102,11 +99,11 @@ while True:
     s.sendall(str.encode(opcao))
     # Executa as funç~eos de acordo com o escolhido pelo Subscriber
     if (opcao == '1'):
-        RecebeMensagem(contInscri)
+        RecebeMensagem()
     elif (opcao == '2'):
-        contInscri = Inscrição(contInscri)
+        Inscrição()
     elif (opcao == '3'):
-        contInscri = Desinscrever(contInscri)
+        Desinscrever()
     else:
         s.close()
         break
