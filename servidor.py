@@ -228,7 +228,7 @@ def Desinscrever(sub, cliente, connexao):
 
 
 #   Lendo o arquivo e aplicando os dados persistidos caso haja.
-#   Restaurando os dados percistidos
+#   Restaurando os dados persistidos
 arquivo1 = open("PersistenciaDados/DadosCliente1.txt", "r")
 arquivo2 = open("PersistenciaDados/DadosCliente2.txt", "r")
 arquivo3 = open("PersistenciaDados/DadosCliente3.txt", "r")

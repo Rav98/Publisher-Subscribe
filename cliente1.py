@@ -84,8 +84,6 @@ def RecebeCalculo():
                 'Calculo do Comprimento da Circunferencia executado, valor= ', comprimento)
 
 #   Função responsavel por enviar a requisição de desinscrição do Publisher
-
-
 def Desinscrever():
     numinscricoes = s.recv(1024)
     cont = 0
