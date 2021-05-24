@@ -207,6 +207,7 @@ def Desinscrever(sub, cliente, connexao):
     RespMensagem = connexao.recv(1024)
     # Salva na lista
     cliente.ListaInscricaoPub.remove(RespMensagem.decode()+'\n')
+    cliente.listaPubCalc.remove(RespMensagem.decode()+'\n')
 
     if(sub == 1):
         PersistirDados(1, cliente.ListaInscricaoPub)
