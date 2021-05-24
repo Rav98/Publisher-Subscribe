@@ -20,8 +20,6 @@ listaPubCalc = ['Diametro da Circunferencia',
                 'Area da Circunferencia', 'Comprimento da Circunferencia']
 
 # Classe cliente, contem a estrutura que cada cliente tera
-
-
 class Cliente:
     def __init__(self, HOST, PORT):
         self.ListaInscricaoPub = []
@@ -69,15 +67,15 @@ def EnviaMensagemCliente3(data):
 def PersistirDados(sub, Lista):
     #   Persistencia dos dados em arquivos
     if (sub == 1):
-        arquivo1 = open("PercistenciaDados/DadosCliente1.txt", "w+")
+        arquivo1 = open("PersistenciaDados/DadosCliente1.txt", "w+")
         arquivo1.writelines(Lista)
         arquivo1.close()
     elif(sub == 2):
-        arquivo2 = open("PercistenciaDados/DadosCliente2.txt", "w+")
+        arquivo2 = open("PersistenciaDados/DadosCliente2.txt", "w+")
         arquivo2.writelines(Lista)
         arquivo2.close()
     elif(sub == 3):
-        arquivo3 = open("PercistenciaDados/DadosCliente3.txt", "w+")
+        arquivo3 = open("PersistenciaDados/DadosCliente3.txt", "w+")
         arquivo3.writelines(Lista)
         arquivo3.close()
 
@@ -231,9 +229,9 @@ def Desinscrever(sub, cliente, connexao):
 
 #   Lendo o arquivo e aplicando os dados persistidos caso haja.
 #   Restaurando os dados percistidos
-arquivo1 = open("PercistenciaDados/DadosCliente1.txt", "r")
-arquivo2 = open("PercistenciaDados/DadosCliente2.txt", "r")
-arquivo3 = open("PercistenciaDados/DadosCliente3.txt", "r")
+arquivo1 = open("PersistenciaDados/DadosCliente1.txt", "r")
+arquivo2 = open("PersistenciaDados/DadosCliente2.txt", "r")
+arquivo3 = open("PersistenciaDados/DadosCliente3.txt", "r")
 
 conteudo1 = arquivo1.readlines()
 conteudo2 = arquivo2.readlines()
