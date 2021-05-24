@@ -15,56 +15,54 @@ PORT3 = 5003
 global listaPub
 listaPub = ['Futebol', 'Volei', 'Basquete']
 
-#   Lista para salvar as inscrições de cada Subscriber
-global ListaInscricaoPub1
-ListaInscricaoPub1 = []
-global listaInscricaoPub2
-ListaInscricaoPub2 = []
-global listaInscricaoPub3
-ListaInscricaoPub3 = []
+global listaPubCalc
+listaPubCalc = ['Diametro da Circunferencia',
+                'Area da Circunferencia', 'Comprimento da Circunferencia']
 
-#   Variaveis globais para salvar as respostas retornadas pelos Subscribers
-global RespSub1
-global RespSub2
-global RespSub3
+# Classe cliente, contem a estrutura que cada cliente tera
 
-#   Criando o objeto socket para cada inscrito
-sub1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sub2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sub3 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-#   Vincular servidor e porta oa socket
-sub1.bind((HOST, PORT1))
-sub2.bind((HOST, PORT2))
-sub3.bind((HOST, PORT3))
+class Cliente:
+    def __init__(self, HOST, PORT):
+        self.ListaInscricaoPub = []
+        self.ListaInscricaoPubCalc = []
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.bind((HOST, PORT))
+
+
+#   Criando clientes
+Cliente1 = Cliente(HOST, PORT1)
+Cliente2 = Cliente(HOST, PORT2)
+Cliente3 = Cliente(HOST, PORT3)
+
 
 #   Colocando o socket em modo de escuta
 print('\nSERVIDOR LIGADO!\n\nAguardando conexões......\n')
-sub1.listen()
-sub2.listen()
-sub3.listen()
+Cliente1.sock.listen()
+Cliente2.sock.listen()
+Cliente3.sock.listen()
 
 #   Retorno da confirmação da conexão pelo Subscriber
-connexao1, endereco1 = sub1.accept()
+connexao1, endereco1 = Cliente1.sock.accept()
 print('Conectado com:', endereco1)
 
-connexao2, endereco2 = sub2.accept()
+connexao2, endereco2 = Cliente2.sock.accept()
 print('Conectado com:', endereco2)
 
-connexao3, endereco3 = sub3.accept()
+connexao3, endereco3 = Cliente3.sock.accept()
 print('Conectado com:', endereco3)
 
 
 #   Função que envia dados para os Subscribers inscritos
-def sub1(data):
+def EnviaMensagemCliente1(data):
     connexao1.sendall(str.encode(data))
 
 
-def sub2(data):
+def EnviaMensagemCliente2(data):
     connexao2.sendall(str.encode(data))
 
 
-def sub3(data):
+def EnviaMensagemCliente3(data):
     connexao3.sendall(str.encode(data))
 
 
@@ -83,129 +81,151 @@ def PersistirDados(sub, Lista):
         arquivo3.writelines(Lista)
         arquivo3.close()
 
+
 # Função responsavel por inscrever o usuario em algum Publisher
+def Inscrição(connexao, cliente, sub, lista):
+    # Envia a lista de Publishers:
+    for n in lista:
+        connexao.sendall(str.encode(n))
+    # Recebe Publisher escolhido pelo usuario
+    MensagemRecebida = connexao.recv(1024)
+    # Salva na lista o Publisher escolhido
+    cliente.ListaInscricaoPub.append(MensagemRecebida.decode()+'\n')
+    if(MensagemRecebida.decode() == 'Diametro da Circunferencia' or MensagemRecebida.decode() == 'Area da Circunferencia' or MensagemRecebida.decode() == 'Comprimento da Circunferencia'):
+        cliente.ListaInscricaoPubCalc.append(MensagemRecebida.decode()+'\n')
 
-
-def Inscrição(sub):
-    if(sub == '1'):
-        # Envia a lista de Publishers:
-        for n in listaPub:
-            connexao1.sendall(str.encode(n))
-        # Recebe Publisher escolhido pelo usuario
-        RespSub1 = connexao1.recv(1024)
-        ListaInscricaoPub1.append(RespSub1.decode()+'\n')
-        PersistirDados(1, ListaInscricaoPub1)
+    if(sub == 1):
+        PersistirDados(1, cliente.ListaInscricaoPub)
         # imprime a escolha do usuario
-        print('Subscriber 1 se inscreveu no:', RespSub1.decode())
+        print('Subscriber ', sub, ' se inscreveu no:', MensagemRecebida.decode())
         #   Função responsavel por inscrever os Subscriber nos grupos
-        pub.subscribe(sub1, RespSub1.decode()+'\n')
-    elif(sub == '2'):
-        # Envia a lista de Publishers:
-        for n in listaPub:
-            connexao2.sendall(str.encode(n))
-        # Recebe Publisher escolhido pelo usuario
-        RespSub2 = connexao2.recv(1024)
-        ListaInscricaoPub2.append(RespSub2.decode()+'\n')
-        PersistirDados(2, ListaInscricaoPub2)
+        pub.subscribe(EnviaMensagemCliente1, MensagemRecebida.decode()+'\n')
+    elif(sub == 2):
+        PersistirDados(2, cliente.ListaInscricaoPub)
         # imprime a escolha do usuario
-        print('Subscriber 2 se inscreveu no:', RespSub2.decode())
-        #   Função responsavel por inscrever os Subscribers nos grupos
-        pub.subscribe(sub2, RespSub2.decode()+'\n')
-    elif(sub == '3'):
-        # Envia a lista de Publishers:
-        for n in listaPub:
-            connexao3.sendall(str.encode(n))
-        # Recebe Publisher escolhido pelo usuario
-        RespSub3 = connexao3.recv(1024)
-        ListaInscricaoPub3.append(RespSub3.decode()+'\n')
-        PersistirDados(3, ListaInscricaoPub3)
+        print('Subscriber ', sub, ' se inscreveu no:', MensagemRecebida.decode())
+        #   Função responsavel por inscrever os Subscriber nos grupos
+        pub.subscribe(EnviaMensagemCliente2, MensagemRecebida.decode()+'\n')
+    elif(sub == 3):
+        PersistirDados(3, cliente.ListaInscricaoPub)
         # imprime a escolha do usuario
-        print('Subscriber 3 se inscreveu no:', RespSub3.decode())
-        #   Função responsavel por inscrever os Subscribers nos grupos
-        pub.subscribe(sub3, RespSub3.decode()+'\n')
+        print('Subscriber ', sub, ' se inscreveu no:', MensagemRecebida.decode())
+        #   Função responsavel por inscrever os Subscriber nos grupos
+        pub.subscribe(EnviaMensagemCliente3, MensagemRecebida.decode()+'\n')
 
 
 # Função responsavel por enviar a mensagem para cada Subscribers
-def EnviarMensagem():
+def EnviarMensagem(opcao):
     #  Variavel contadora para contar as requisições de mensagem
     cont1 = 0
     cont2 = 0
     cont3 = 0
-    #  Laço para contar quantos Publishers o usuario esta inscrito
-    for n in ListaInscricaoPub1:
-        cont1 = cont1+1
-    #  Envia mensagem
-    connexao1.sendall(str.encode(str(cont1)))
-    for n in ListaInscricaoPub2:
-        cont2 = cont2+1
+    #   Verifica se a mensagem é de texto ou é de numero para executar calculos
+    #  1 para mensagens 2 para calculos
+    if(opcao == 1):
+        #  Laço para contar quantos Publishers o usuario esta inscrito
+        for n in Cliente1.ListaInscricaoPub:
+            if(n == 'Futebol'+'\n' or n == 'Volei'+'\n' or n == 'Basquete'+'\n'):
+                cont1 = cont1+1
+        #  Envia mensagem
+        connexao1.sendall(str.encode(str(cont1)))
+        for n in Cliente2.ListaInscricaoPub:
+            if(n == 'Futebol'+'\n' or n == 'Volei'+'\n' or n == 'Basquete'+'\n'):
+                cont2 = cont2+1
+        connexao2.sendall(str.encode(str(cont2)))
+        for n in Cliente3.ListaInscricaoPub:
+            if(n == 'Futebol'+'\n' or n == 'Volei'+'\n' or n == 'Basquete'+'\n'):
+                cont3 = cont3+1
+        connexao3.sendall(str.encode(str(cont3)))
+        # Recebe a mensagem e envia ao subscribers
+        print('\nEscreva uma mensagem para os Subscribers do Publisher',
+              listaPub[0], ':')
+        data1 = input()
+        pub.sendMessage(listaPub[0]+'\n', data=data1)
 
-    connexao2.sendall(str.encode(str(cont2)))
-    for n in ListaInscricaoPub3:
-        cont3 = cont3+1
+        print('\nEscreva uma mensagem para os Subscribers do Publisher',
+              listaPub[1], ':')
+        data2 = input()
+        pub.sendMessage(listaPub[1]+'\n', data=data2)
 
-    connexao3.sendall(str.encode(str(cont3)))
-    # Pega a mesnagem enviada pelo Publisher
-    print('\nEscreva uma mensagem para os Subscribers do Publisher',
-          listaPub[0], ':')
-    data1 = input()
-    pub.sendMessage(listaPub[0]+'\n', data=data1)
+        print('\nEscreva uma mensagem para os Subscribers do Publisher',
+              listaPub[2], ':')
+        data3 = input()
+        pub.sendMessage(listaPub[2]+'\n', data=data3)
+        print('\nMensagem enviada aos Subscribers!\n')
 
-    print('\nEscreva uma mensagem para os Subscribers do Publisher',
-          listaPub[1], ':')
-    data2 = input()
-    pub.sendMessage(listaPub[1]+'\n', data=data2)
+    elif(opcao == 2):
+        #  Laço para contar quantos Publishers o usuario esta inscrito
+        for n in Cliente1.ListaInscricaoPubCalc:
+            cont1 = cont1+1
+        #  Envia o numero de Publishers inscritos
+        connexao1.sendall(str.encode(str(cont1)))
+        for n in Cliente2.ListaInscricaoPubCalc:
+            cont2 = cont2+1
+        #  Envia o numero de Publishers inscritos
+        connexao2.sendall(str.encode(str(cont2)))
+        for n in Cliente3.ListaInscricaoPubCalc:
+            cont3 = cont3+1
+        #  Envia o numero de Publishers inscritos
+        connexao3.sendall(str.encode(str(cont3)))
+        #   Colhendo o numero do calculo
+        print('\nEscreva um valor do raio para calculo ',
+              listaPubCalc[0], ':')
+        data1 = input()
+        #   Envia o numero do calculo
+        pub.sendMessage(listaPubCalc[0]+'\n', data=data1)
+        #   Indica qual função utilizar
+        pub.sendMessage(listaPubCalc[0]+'\n', data='1')
 
-    print('\nEscreva uma mensagem para os Subscribers do Publisher',
-          listaPub[2], ':')
-    data3 = input()
-    pub.sendMessage(listaPub[2]+'\n', data=data3)
-    print('\nMensagem enviada aos Subscribers!\n')
+        print('\nEscreva um valor do raio para calculo ',
+              listaPubCalc[1], ':')
+        data2 = input()
+        #   Envia o numero do calculo
+        pub.sendMessage(listaPubCalc[1]+'\n', data=data2)
+        #   Indica qual função utilizar
+        pub.sendMessage(listaPubCalc[1]+'\n', data='2')
+
+        print('\nEscreva um valor do raio para calculo ',
+              listaPubCalc[2], ':')
+        data3 = input()
+        #   Envia o numero do calculo
+        pub.sendMessage(listaPubCalc[2]+'\n', data=data3)
+        #   Indica qual função utilizar
+        pub.sendMessage(listaPubCalc[2]+'\n', data='3')
+
+        print('\nMensagem enviada aos Subscribers!\n')
 
 
 # Função responsavel por desinscrever o Subscriber
-def Desinscrever(sub):
-    if (sub == '1'):
-        # Envia a quantidade de Publishers o subscriber esta inscrito
-        connexao1.sendall(str.encode(str(len(ListaInscricaoPub1))))
-        # Envia a lista de Publishers o subscriber esta inscrito
-        for n in ListaInscricaoPub1:
-            connexao1.sendall(str.encode(n))
-        # Recebe o dado com a informação de qual Pubisher o Subscribe quer se desinscrever
-        RespSub1 = connexao1.recv(1024)
-        # Salva na lista
-        ListaInscricaoPub1.remove(RespSub1.decode()+'\n')
-        PersistirDados(1, ListaInscricaoPub1)
+def Desinscrever(sub, cliente, connexao):
+    # Envia a quantidade de Publishers o subscriber esta inscrito
+    connexao.sendall(str.encode(str(len(cliente.ListaInscricaoPub))))
+    # Envia a lista de Publishers o subscriber esta inscrito
+    for n in cliente.ListaInscricaoPub:
+        connexao.sendall(str.encode(n))
+    # Recebe o dado com a informação de qual Pubisher o Subscribe quer se desinscrever
+    RespMensagem = connexao.recv(1024)
+    # Salva na lista
+    cliente.ListaInscricaoPub.remove(RespMensagem.decode()+'\n')
+
+    if(sub == 1):
+        PersistirDados(1, cliente.ListaInscricaoPub)
         # Chama a biblioteca PyPubSub para executar a desinscrição
-        pub.unsubscribe(sub1, RespSub1.decode()+'\n')
-        print('Subscriber1 se desinscreveu do:', RespSub1.decode())
-    elif (sub == '2'):
-        # Envia a quantidade de Publishers o subscriber esta inscrito
-        connexao2.sendall(str.encode(str(len(ListaInscricaoPub2))))
-        # Envia a lista de Publishers o subscriber esta inscrito
-        for n in ListaInscricaoPub2:
-            connexao2.sendall(str.encode(n))
-        # Recebe o dado com a informação de qual Pubisher o Subscribe quer se desinscrever
-        RespSub2 = connexao2.recv(1024)
-        # Salva na lista
-        ListaInscricaoPub2.remove(RespSub2.decode()+'\n')
-        PersistirDados(2, ListaInscricaoPub2)
+        pub.unsubscribe(EnviaMensagemCliente1, RespMensagem.decode()+'\n')
+        print('Subscriber ', sub, 'se desinscreveu do:',
+              RespMensagem.decode())
+    elif(sub == 2):
+        PersistirDados(2, cliente.ListaInscricaoPub)
         # Chama a biblioteca PyPubSub para executar a desinscrição
-        pub.unsubscribe(sub2, RespSub2.decode()+'\n')
-        print('Subscriber2 se desinscreveu do:', RespSub2.decode())
-    elif (sub == '3'):
-        # Envia a quantidade de Publishers o subscriber esta inscrito
-        connexao3.sendall(str.encode(str(len(ListaInscricaoPub3))))
-        # Envia a lista de Publishers o subscriber esta inscrito
-        for n in ListaInscricaoPub3:
-            connexao3.sendall(str.encode(n))
-        # Recebe o dado com a informação de qual Pubisher o Subscribe quer se desinscrever
-        RespSub3 = connexao3.recv(1024)
-        # Salva na lista
-        ListaInscricaoPub3.remove(RespSub3.decode()+'\n')
-        PersistirDados(3, ListaInscricaoPub3)
+        pub.unsubscribe(EnviaMensagemCliente2, RespMensagem.decode()+'\n')
+        print('Subscriber ', sub, 'se desinscreveu do:',
+              RespMensagem.decode())
+    elif(sub == 3):
+        PersistirDados(3, cliente.ListaInscricaoPub)
         # Chama a biblioteca PyPubSub para executar a desinscrição
-        pub.unsubscribe(sub3, RespSub3.decode()+'\n')
-        print('Subscriber3 se desinscreveu do:', RespSub3.decode())
+        pub.unsubscribe(EnviaMensagemCliente3, RespMensagem.decode()+'\n')
+        print('Subscriber ', sub, 'se desinscreveu do:',
+              RespMensagem.decode())
 
 
 #   Lendo o arquivo e aplicando os dados persistidos caso haja.
@@ -218,18 +238,24 @@ conteudo1 = arquivo1.readlines()
 conteudo2 = arquivo2.readlines()
 conteudo3 = arquivo3.readlines()
 
-ListaInscricaoPub1 = conteudo1
-ListaInscricaoPub2 = conteudo2
-ListaInscricaoPub3 = conteudo3
+Cliente1.ListaInscricaoPub = conteudo1
+Cliente2.ListaInscricaoPub = conteudo2
+Cliente3.ListaInscricaoPub = conteudo3
 
 for n1 in conteudo1:
-    pub.subscribe(sub1, n1)
+    pub.subscribe(EnviaMensagemCliente1, n1)
+    if(n1 == 'Diametro da Circunferencia'+'\n' or n1 == 'Area da Circunferencia'+'\n' or n1 == 'Comprimento da Circunferencia'+'\n'):
+        Cliente1.ListaInscricaoPubCalc.append(n1)
 
 for n2 in conteudo2:
-    pub.subscribe(sub2, n2)
+    pub.subscribe(EnviaMensagemCliente2, n2)
+    if(n2 == 'Diametro da Circunferencia'+'\n' or n2 == 'Area da Circunferencia'+'\n' or n2 == 'Comprimento da Circunferencia'+'\n'):
+        Cliente2.ListaInscricaoPubCalc.append(n2)
 
 for n3 in conteudo3:
-    pub.subscribe(sub3, n3)
+    pub.subscribe(EnviaMensagemCliente3, n3)
+    if(n3 == 'Diametro da Circunferencia'+'\n' or n3 == 'Area da Circunferencia'+'\n' or n3 == 'Comprimento da Circunferencia'+'\n'):
+        Cliente3.ListaInscricaoPubCalc.append(n3)
 
 arquivo1.close()
 arquivo2.close()
@@ -240,24 +266,31 @@ while True:
     # ouvindo os Subscribers para saber se eles querem se inscrever ou desinscrever
     resposta1 = connexao1.recv(1024)
     if resposta1.decode() == '1':
-        EnviarMensagem()
+        EnviarMensagem(1)
     elif resposta1.decode() == '2':
-        Inscrição('1')
+        EnviarMensagem(2)
     elif resposta1.decode() == '3':
-        Desinscrever('1')
+        Inscrição(connexao1, Cliente1, 1, listaPub)
+    elif resposta1.decode() == '4':
+        Inscrição(connexao1, Cliente1, 1, listaPubCalc)
+    elif resposta1.decode() == '5':
+        Desinscrever(1, Cliente1, connexao1)
 
     resposta2 = connexao2.recv(1024)
-    if resposta2.decode() == '2':
-        Inscrição('2')
-    elif resposta2.decode() == '3':
-        Desinscrever('2')
+    if resposta2.decode() == '3':
+        Inscrição(connexao2, Cliente2, 2, listaPub)
+    elif resposta2.decode() == '4':
+        Inscrição(connexao2, Cliente2, 2, listaPubCalc)
+    elif resposta2.decode() == '5':
+        Desinscrever(2, Cliente2, connexao2)
 
     resposta3 = connexao3.recv(1024)
-    if resposta3.decode() == '2':
-        Inscrição('3')
-    elif resposta3.decode() == '3':
-        Desinscrever('3')
-
+    if resposta3.decode() == '3':
+        Inscrição(connexao3, Cliente3, 3, listaPub)
+    elif resposta3.decode() == '4':
+        Inscrição(connexao3, Cliente3, 3, listaPubCalc)
+    elif resposta3.decode() == '5':
+        Desinscrever(3, Cliente3, connexao3)
 
 #   Fecha as conexao do socket
 connexao1.close()
