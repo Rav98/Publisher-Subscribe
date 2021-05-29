@@ -1,6 +1,7 @@
 #   Importando a biblioteca do Socket
 from os import remove
 import socket
+from time import sleep
 
 #   Importando a biblioteca do PyPubSub
 from pubsub import pub
@@ -20,6 +21,8 @@ listaPubCalc = ['Diametro da Circunferencia',
                 'Area da Circunferencia', 'Comprimento da Circunferencia']
 
 # Classe cliente, contem a estrutura que cada cliente tera
+
+
 class Cliente:
     def __init__(self, HOST, PORT):
         self.ListaInscricaoPub = []
@@ -84,6 +87,7 @@ def PersistirDados(sub, Lista):
 def Inscrição(connexao, cliente, sub, lista):
     # Envia a lista de Publishers:
     for n in lista:
+        sleep(0.5)
         connexao.sendall(str.encode(n))
     # Recebe Publisher escolhido pelo usuario
     MensagemRecebida = connexao.recv(1024)
@@ -199,14 +203,16 @@ def Desinscrever(sub, cliente, connexao):
     # Envia a quantidade de Publishers o subscriber esta inscrito
     connexao.sendall(str.encode(str(len(cliente.ListaInscricaoPub))))
     # Envia a lista de Publishers o subscriber esta inscrito
+    sleep(1)
     for n in cliente.ListaInscricaoPub:
+        sleep(0.5)
         connexao.sendall(str.encode(n))
     # Recebe o dado com a informação de qual Pubisher o Subscribe quer se desinscrever
     RespMensagem = connexao.recv(1024)
     # Salva na lista
     cliente.ListaInscricaoPub.remove(RespMensagem.decode()+'\n')
     if(RespMensagem.decode() == 'Diametro da Circunferencia' or RespMensagem.decode() == 'Area da Circunferencia' or RespMensagem.decode() == 'Comprimento da Circunferencia'):
-        cliente.listaPubCalc.remove(RespMensagem.decode()+'\n')
+        cliente.ListaInscricaoPubCalc.remove(RespMensagem.decode()+'\n')
     if(sub == 1):
         PersistirDados(1, cliente.ListaInscricaoPub)
         # Chama a biblioteca PyPubSub para executar a desinscrição
