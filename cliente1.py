@@ -75,7 +75,7 @@ def RecebeCalculo():
             print('Calculo do Diametro da Circunferencia executado, valor= ', diametro)
         #   Calcula da Área
         elif(funcao.decode() == '2'):
-            area = math.pi*int(data.decode())
+            area = math.pi*(int(data.decode())*int(data.decode()))
             print('Calculo da Area da Circunferencia executado, valor= ', area)
         #   Calcula da Comprimento
         elif(funcao.decode() == '3'):
