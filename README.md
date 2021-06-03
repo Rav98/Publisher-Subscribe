@@ -37,5 +37,5 @@ Neste documento contém um tutorial de como funciona Publisher-Subscribe, como f
 
 ## Demonstração da aplicação:
 
-Assista ao video de demostração da execução da aplicação por meio do seguinte link: https://youtu.be/NeskO--44fo
+Assista ao video de demostração da execução da aplicação por meio do seguinte link: https://www.youtube.com/watch?v=nizucEyP6ws 
 
