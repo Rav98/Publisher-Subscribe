@@ -31,3 +31,8 @@ Os arquivos nesta pasta, são os arquivos de percistencia dos Publishers de cada
 3. Abra o Terminal Linux ou o CMD do Windows e execute a aplicação do servidor: _Terminal Linux:_ **"python3 servidor.py"** ou _CMD Windows:_ **"servidor.py"**
 4. Abra o Terminal Linux ou o CMD do Windows e execute a aplicação dos clientes: _Terminal Linux:_ **"python3 cliente1.py"** ou _CMD Windows:_ **"cliente1.py"**
 5. Execute todos os clientes conforme a etapa 4
+
+## Demonstração da aplicação:
+
+Assista o video de demostração da execução da aplicação: https://youtu.be/NeskO--44fo
+
