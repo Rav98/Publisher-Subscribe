@@ -25,7 +25,7 @@ Os arquivos cliente1.py, cliente2.py e cliente3.py são iguais, a única coisa q
 Nesta pasta estão os arquivos de persistência de inscrições dos clientes. Nesta implementação, ocorre a persistência das inscrições e desinscrições realizadas pelos subscribers e o resultado dessas ações está dentro desta pasta, tendo cada um dos clientes um arquivo próprio. Por exemplo, o cliente1 tem seus dados persistidos em DadosCliente1.txt, e assim sucessivamente para os demais clientes.
 
 ### Publish-Subscribe_Tutorial.pdf
-Neste documento contem um tutorial de como funciona Publisher-Subscribe e como foi implementado o código. 
+Neste documento contém um tutorial de como funciona Publisher-Subscribe, como foi implementado e a logica do código. 
 
 ## Executar a implementação:
 
